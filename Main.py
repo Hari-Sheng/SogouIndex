@@ -1,6 +1,9 @@
 # encoding=utf-8
-import urllib2, re, string, time, datetime, xlwt, os, sys, xlrd, xlutils
-from xlutils.copy import copy
+import urllib2, re, string, time, datetime, os, sys, openpyxl
+from openpyxl.reader.excel import load_workbook
+from openpyxl.workbook import Workbook
+
+
 
 reload(sys)
 sys.setdefaultencoding('gbk')
@@ -63,34 +66,47 @@ def search(name, key, dir):
             RecordDate.append(Datetime.strftime('%Y-%m-%d'))
             Datetime = Datetime + datetime.timedelta(days=1)
 
+        k = 0
         # print RecordDate
         if os.path.isfile(CurrentDir+'\\'+name+'.xlsx') and (keyword!=name):
-            print(CurrentDir+'\\'+name+'.xlsx')
-            WorkbookTemp = xlrd.open_workbook(CurrentDir+'\\'+name+'.xlsx', on_demand=True, formatting_info=True)
-            WorkbookTemp.release_resources()
-            print WorkbookTemp.get_sheet(0).cell(0,0).value
-            Workbook = copy(WorkbookTemp)
-            Worksheet = Workbook.get_sheet(0)
+            wb = load_workbook(filename = name +".xlsx")
+            ws = wb.get_sheet_by_name("SogouIndex")
+
+            k = ws.get_highest_column()
+            # print(CurrentDir+'\\'+name+'.xlsx')
+            # wb = load_workbook
+            # print WorkbookTemp.get_sheet(0).cell(0,0).value
+            # Workbook = copy(WorkbookTemp)
+            # Worksheet = Workbook.get_sheet(0)
             #print Worksheet.cell(0,0),value
+            ws.cell(row=0,column=0+k).set_value_explicit(value=keyword)
+            ws.cell(row=0,column=1+k).set_value_explicit(value=keyword)
+            ws.cell(row=1,column=0+k).set_value_explicit(value='UserIndex')
+            ws.cell(row=1,column=1+k).set_value_explicit(value='MediaIndex')
 
+            for i in range(0+k,2+k):
+                for j in range(2,int(DayLength)+2):
+                    ws.cell(row=j,column=0+k).set_value_explicit(value=UserIndex[j-2])
+                    ws.cell(row=j,column=1+k).set_value_explicit(value=MediaIndex[j-2])
         else:
-            Workbook = xlwt.Workbook(encoding = 'gbk')
-            Worksheet = Workbook.add_sheet(keyword,cell_overwrite_ok=True)
+            wb = Workbook( )
+            ws = wb.get_sheet_by_name("Sheet")
+            ws.title = 'SogouIndex'
             k=0
+            ws.cell(row=0,column=1+k).set_value_explicit(value=keyword)
+            ws.cell(row=0,column=2+k).set_value_explicit(value=keyword)
+            ws.cell(row=1,column=0+k).set_value_explicit(value='Date')
+            ws.cell(row=1,column=1+k).set_value_explicit(value='UserIndex')
+            ws.cell(row=1,column=2+k).set_value_explicit(value='MediaIndex')
 
-        Worksheet.write(1,0+k,label=keyword)
-        Worksheet.write(1,1+k,label=keyword)
-        Worksheet.write(1,2+k,label=keyword)
-        Worksheet.write(1,0+k,label='Date')
-        Worksheet.write(1,1+k,label='UserIndex')
-        Worksheet.write(1,2+k,label='MediaIndex')
-        for i in range(0+k,2+k):
-            for j in range(2,int(DayLength)+2):
-                Worksheet.write(j,0,label=RecordDate[j-2])
-                Worksheet.write(j,1,label=int(UserIndex[j-2]))
-                Worksheet.write(j,2,label=int(MediaIndex[j-2]))
+            for i in range(0+k,2+k):
+                for j in range(2,int(DayLength)+2):
+                    ws.cell(row=j,column=0+k).set_value_explicit(value=RecordDate[j-2])
+                    ws.cell(row=j,column=1+k).set_value_explicit(value=UserIndex[j-2])
+                    ws.cell(row=j,column=2+k).set_value_explicit(value=MediaIndex[j-2])
 
-        Workbook.save(CurrentDir+'\\'+keyword+'.xlsx')
+
+        wb.save(CurrentDir+'\\'+name+'.xlsx')
 
         print ("|Data saved")
         print ("|-------------------------------------------------------------------------")
@@ -100,7 +116,7 @@ def search(name, key, dir):
         else:
             print ("|Saving Structure: single-keywords")
         print ("|Time span: "+ str(int(DayLength)) +' days')
-        print ("|Excel File saved at "+CurrentDir+'\\'+keyword+'.xlsx')
+        print ("|Excel File saved at "+CurrentDir+'\\'+name+'.xlsx')
 
 if __name__=="__main__":
     isLocal= " "
@@ -113,15 +129,16 @@ if __name__=="__main__":
         KeywordList = raw_input("Input the name of file: ")
         while not os.path.isfile(KeywordList+".txt"):
             KeywordList = raw_input("File ["+KeywordList+".txt] does not exist, please input the name of file again:")
-
+        if os.path.isfile(KeywordList+'.xlsx'):
+            os.remove(KeywordList+'.xlsx')
         KeywordText = open(KeywordList+".txt").read()
-        print re.split('[,]*[\s]*[\r]*[\n]*[\t]*',KeywordText)
-        KeywordText = KeywordText.replace('\r',' ').replace('\n', ' ').replace('\t', ' ').strip()
-        print (KeywordText)
+        #print re.split('[,]*[\s]*[\r]*[\n]*[\t]*',KeywordText)
+        #KeywordText = KeywordText.replace('\r',' ').replace('\n', ' ').replace('\t', ' ').strip()
+        #print (KeywordText)
         keywords = re.split('[\s]*[,]*[\s]*[\r]*[\n]*[\t]*',KeywordText)
-        print keywords
+        # print keywords
         for element in keywords:
-            search(element, element, os.getcwd())
+            search(KeywordList, element, os.getcwd())
         keyword = raw_input("Press Enter to exit...")
     else:
         while 1:
@@ -129,10 +146,11 @@ if __name__=="__main__":
             keyword = raw_input("Input the keyword (Press Enter to exit): ")
             if len(keyword) == 0:
                 break
-            #等有机会写一个把多个变量加载到一个表格里的
+
+            # try to merge multi-variable into one excel file
             # elif keyword.find(",")!=-1:
             #     keywords = keyword.split(",")
-            #    # os.remove(keywords[0]+'.xlsx')
+            #    # os.remove(keywords[0]+'.xls')
             #     for element in keywords:
             #         search(keywords[0], element,os.getcwd())
             # elif keyword.find(" ")!=-1:
