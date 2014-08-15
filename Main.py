@@ -27,7 +27,7 @@ def search(name, key, dir):
     # print UserIndexMatch.group()[15:]
     # print MediaIndexMatch.group()
     # print MediaIndexMatch.group()[21:-1]
-    if UserIndexMatch == None:
+    if UserIndexMatch == None or MediaIndexMatch == None:
         print ("|-------------------------------------------------------------------------")
         print ("|Keyword: " + keyword)
         print ("|Sorry, but this keyword hasn't been included by SogouIndex.")
@@ -63,13 +63,10 @@ def search(name, key, dir):
             RecordDate.append(Datetime.strftime('%Y-%m-%d'))
             Datetime = Datetime + datetime.timedelta(days=1)
 
-
-
-
         # print RecordDate
-        if os.path.isfile(CurrentDir+'\\'+name+'.xls') and (keyword!=name):
-            print(CurrentDir+'\\'+name+'.xls')
-            WorkbookTemp = xlrd.open_workbook(CurrentDir+'\\'+name+'.xls', on_demand=True, formatting_info=True)
+        if os.path.isfile(CurrentDir+'\\'+name+'.xlsx') and (keyword!=name):
+            print(CurrentDir+'\\'+name+'.xlsx')
+            WorkbookTemp = xlrd.open_workbook(CurrentDir+'\\'+name+'.xlsx', on_demand=True, formatting_info=True)
             WorkbookTemp.release_resources()
             print WorkbookTemp.get_sheet(0).cell(0,0).value
             Workbook = copy(WorkbookTemp)
@@ -93,7 +90,7 @@ def search(name, key, dir):
                 Worksheet.write(j,1,label=int(UserIndex[j-2]))
                 Worksheet.write(j,2,label=int(MediaIndex[j-2]))
 
-        Workbook.save(CurrentDir+'\\'+keyword+'.xls')
+        Workbook.save(CurrentDir+'\\'+keyword+'.xlsx')
 
         print ("|Data saved")
         print ("|-------------------------------------------------------------------------")
@@ -103,28 +100,39 @@ def search(name, key, dir):
         else:
             print ("|Saving Structure: single-keywords")
         print ("|Time span: "+ str(int(DayLength)) +' days')
-        print ("|Excel File saved at "+CurrentDir+'\\'+keyword+'.xls')
+        print ("|Excel File saved at "+CurrentDir+'\\'+keyword+'.xlsx')
 
 if __name__=="__main__":
-    if os.path.isfile("Keywords.txt"):
-        KeywordText = open("Keywords.txt").read()
+    isLocal= " "
+    while not (isLocal=="Y" or isLocal=="N"):
+        print isLocal
+        isLocal = raw_input("Read from local files?(Y/N): ")
+
+    if isLocal=="Y":
+        print ("=========================================================================")
+        KeywordList = raw_input("Input the name of file: ")
+        while not os.path.isfile(KeywordList+".txt"):
+            KeywordList = raw_input("File ["+KeywordList+".txt] does not exist, please input the name of file again:")
+
+        KeywordText = open(KeywordList+".txt").read()
+        print re.split('[,]*[\s]*[\r]*[\n]*[\t]*',KeywordText)
+        KeywordText = KeywordText.replace('\r',' ').replace('\n', ' ').replace('\t', ' ').strip()
         print (KeywordText)
-        keywords = KeywordText.split(" ")
+        keywords = re.split('[\s]*[,]*[\s]*[\r]*[\n]*[\t]*',KeywordText)
         print keywords
         for element in keywords:
             search(element, element, os.getcwd())
-
         keyword = raw_input("Press Enter to exit...")
     else:
         while 1:
             print ("=========================================================================")
-            keyword = raw_input("Input the keyword (Press Enter to exit):")
+            keyword = raw_input("Input the keyword (Press Enter to exit): ")
             if len(keyword) == 0:
                 break
             #等有机会写一个把多个变量加载到一个表格里的
             # elif keyword.find(",")!=-1:
             #     keywords = keyword.split(",")
-            #    # os.remove(keywords[0]+'.xls')
+            #    # os.remove(keywords[0]+'.xlsx')
             #     for element in keywords:
             #         search(keywords[0], element,os.getcwd())
             # elif keyword.find(" ")!=-1:
