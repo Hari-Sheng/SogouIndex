@@ -66,34 +66,45 @@ def search(name, key, dir):
             RecordDate.append(Datetime.strftime('%Y-%m-%d'))
             Datetime = Datetime + datetime.timedelta(days=1)
 
+        k = 0
         # print RecordDate
-        if os.path.isfile(CurrentDir+'\\'+name+'.xls') and (keyword!=name):
-            print ""
-            # print(CurrentDir+'\\'+name+'.xls')
-            # WorkbookTemp = xlrd.open_workbook(CurrentDir+'\\'+name+'.xls', on_demand=True, formatting_info=True)
+        if os.path.isfile(CurrentDir+'\\'+name+'.xlsx') and (keyword!=name):
+            wb = load_workbook(filename = name +".xlsx")
+            ws = wb.get_sheet_by_name("SogouIndex")
+
+            k = ws.get_highest_column()
+            # print(CurrentDir+'\\'+name+'.xlsx')
+            # wb = load_workbook
             # print WorkbookTemp.get_sheet(0).cell(0,0).value
             # Workbook = copy(WorkbookTemp)
             # Worksheet = Workbook.get_sheet(0)
             #print Worksheet.cell(0,0),value
+            ws.cell(row=0,column=0+k).set_value_explicit(value=keyword)
+            ws.cell(row=0,column=1+k).set_value_explicit(value=keyword)
+            ws.cell(row=1,column=0+k).set_value_explicit(value='UserIndex')
+            ws.cell(row=1,column=1+k).set_value_explicit(value='MediaIndex')
 
+            for i in range(0+k,2+k):
+                for j in range(2,int(DayLength)+2):
+                    ws.cell(row=j,column=0+k).set_value_explicit(value=UserIndex[j-2])
+                    ws.cell(row=j,column=1+k).set_value_explicit(value=MediaIndex[j-2])
         else:
             wb = Workbook( )
-            ws = wb.create_sheet()
+            ws = wb.get_sheet_by_name("Sheet")
             ws.title = 'SogouIndex'
             k=0
+            ws.cell(row=0,column=1+k).set_value_explicit(value=keyword)
+            ws.cell(row=0,column=2+k).set_value_explicit(value=keyword)
+            ws.cell(row=1,column=0+k).set_value_explicit(value='Date')
+            ws.cell(row=1,column=1+k).set_value_explicit(value='UserIndex')
+            ws.cell(row=1,column=2+k).set_value_explicit(value='MediaIndex')
 
-        ws.cell(row=0,column=0+k).set_value_explicit(value=keyword)
-        ws.cell(row=0,column=1+k).set_value_explicit(value=keyword)
-        ws.cell(row=0,column=2+k).set_value_explicit(value=keyword)
-        ws.cell(row=1,column=0+k).set_value_explicit(value='Date')
-        ws.cell(row=1,column=1+k).set_value_explicit(value='UserIndex')
-        ws.cell(row=1,column=2+k).set_value_explicit(value='MediaIndex')
+            for i in range(0+k,2+k):
+                for j in range(2,int(DayLength)+2):
+                    ws.cell(row=j,column=0+k).set_value_explicit(value=RecordDate[j-2])
+                    ws.cell(row=j,column=1+k).set_value_explicit(value=UserIndex[j-2])
+                    ws.cell(row=j,column=2+k).set_value_explicit(value=MediaIndex[j-2])
 
-        for i in range(0+k,2+k):
-            for j in range(2,int(DayLength)+2):
-                ws.cell(row=j,column=0+k).set_value_explicit(value=RecordDate[j-2])
-                ws.cell(row=j,column=1+k).set_value_explicit(value=UserIndex[j-2])
-                ws.cell(row=j,column=2+k).set_value_explicit(value=MediaIndex[j-2])
 
         wb.save(CurrentDir+'\\'+name+'.xlsx')
 
@@ -118,15 +129,16 @@ if __name__=="__main__":
         KeywordList = raw_input("Input the name of file: ")
         while not os.path.isfile(KeywordList+".txt"):
             KeywordList = raw_input("File ["+KeywordList+".txt] does not exist, please input the name of file again:")
-
+        if os.path.isfile(KeywordList+'.xlsx'):
+            os.remove(KeywordList+'.xlsx')
         KeywordText = open(KeywordList+".txt").read()
         #print re.split('[,]*[\s]*[\r]*[\n]*[\t]*',KeywordText)
         #KeywordText = KeywordText.replace('\r',' ').replace('\n', ' ').replace('\t', ' ').strip()
         #print (KeywordText)
         keywords = re.split('[\s]*[,]*[\s]*[\r]*[\n]*[\t]*',KeywordText)
-        print keywords
+        # print keywords
         for element in keywords:
-            search(element, element, os.getcwd())
+            search(KeywordList, element, os.getcwd())
         keyword = raw_input("Press Enter to exit...")
     else:
         while 1:
