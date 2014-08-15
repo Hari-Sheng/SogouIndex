@@ -1,6 +1,9 @@
 # encoding=utf-8
-import urllib2, re, string, time, datetime, xlwt, os, sys, xlrd, xlutils
-from xlutils.copy import copy
+import urllib2, re, string, time, datetime, os, sys, openpyxl
+from openpyxl.reader.excel import load_workbook
+from openpyxl.workbook import Workbook
+
+
 
 reload(sys)
 sys.setdefaultencoding('gbk')
@@ -65,31 +68,34 @@ def search(name, key, dir):
 
         # print RecordDate
         if os.path.isfile(CurrentDir+'\\'+name+'.xls') and (keyword!=name):
-            print(CurrentDir+'\\'+name+'.xls')
-            WorkbookTemp = xlrd.open_workbook(CurrentDir+'\\'+name+'.xls', on_demand=True, formatting_info=True)
-            print WorkbookTemp.get_sheet(0).cell(0,0).value
-            Workbook = copy(WorkbookTemp)
-            Worksheet = Workbook.get_sheet(0)
+            print ""
+            # print(CurrentDir+'\\'+name+'.xls')
+            # WorkbookTemp = xlrd.open_workbook(CurrentDir+'\\'+name+'.xls', on_demand=True, formatting_info=True)
+            # print WorkbookTemp.get_sheet(0).cell(0,0).value
+            # Workbook = copy(WorkbookTemp)
+            # Worksheet = Workbook.get_sheet(0)
             #print Worksheet.cell(0,0),value
 
         else:
-            Workbook = xlwt.Workbook(encoding = 'gbk')
-            Worksheet = Workbook.add_sheet("SogouIndex",cell_overwrite_ok=True)
+            wb = Workbook( )
+            ws = wb.create_sheet()
+            ws.title = 'SogouIndex'
             k=0
 
-        Worksheet.write(1,0+k,label=keyword)
-        Worksheet.write(1,1+k,label=keyword)
-        Worksheet.write(1,2+k,label=keyword)
-        Worksheet.write(1,0+k,label='Date')
-        Worksheet.write(1,1+k,label='UserIndex')
-        Worksheet.write(1,2+k,label='MediaIndex')
+        ws.cell(row=0,column=0+k).set_value_explicit(value=keyword)
+        ws.cell(row=0,column=1+k).set_value_explicit(value=keyword)
+        ws.cell(row=0,column=2+k).set_value_explicit(value=keyword)
+        ws.cell(row=1,column=0+k).set_value_explicit(value='Date')
+        ws.cell(row=1,column=1+k).set_value_explicit(value='UserIndex')
+        ws.cell(row=1,column=2+k).set_value_explicit(value='MediaIndex')
+
         for i in range(0+k,2+k):
             for j in range(2,int(DayLength)+2):
-                Worksheet.write(j,0,label=RecordDate[j-2])
-                Worksheet.write(j,1,label=int(UserIndex[j-2]))
-                Worksheet.write(j,2,label=int(MediaIndex[j-2]))
+                ws.cell(row=j,column=0+k).set_value_explicit(value=RecordDate[j-2])
+                ws.cell(row=j,column=1+k).set_value_explicit(value=UserIndex[j-2])
+                ws.cell(row=j,column=2+k).set_value_explicit(value=MediaIndex[j-2])
 
-        Workbook.save(CurrentDir+'\\'+keyword+'.xls')
+        wb.save(CurrentDir+'\\'+name+'.xlsx')
 
         print ("|Data saved")
         print ("|-------------------------------------------------------------------------")
@@ -99,7 +105,7 @@ def search(name, key, dir):
         else:
             print ("|Saving Structure: single-keywords")
         print ("|Time span: "+ str(int(DayLength)) +' days')
-        print ("|Excel File saved at "+CurrentDir+'\\'+keyword+'.xls')
+        print ("|Excel File saved at "+CurrentDir+'\\'+name+'.xlsx')
 
 if __name__=="__main__":
     isLocal= " "
