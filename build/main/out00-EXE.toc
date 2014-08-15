@@ -1,9 +1,0 @@
-('D:\\GitHub\\SogouIndex\\dist\\main.exe',
- True,
- False,
- None,
- None,
- [],
- None,
- False,
- 1407774975L)
