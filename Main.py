@@ -1,4 +1,4 @@
-# encoding=utf-8
+# encoding=gbk
 import urllib2, re, string, time, datetime, os, sys, openpyxl
 from openpyxl.reader.excel import load_workbook
 from openpyxl.workbook import Workbook
@@ -79,31 +79,31 @@ def search(name, key, dir):
             # Workbook = copy(WorkbookTemp)
             # Worksheet = Workbook.get_sheet(0)
             #print Worksheet.cell(0,0),value
-            ws.cell(row=0,column=0+k).set_value_explicit(value=keyword)
-            ws.cell(row=0,column=1+k).set_value_explicit(value=keyword)
-            ws.cell(row=1,column=0+k).set_value_explicit(value='UserIndex')
-            ws.cell(row=1,column=1+k).set_value_explicit(value='MediaIndex')
+            ws.cell(row=1,column=1+k).value=keyword.decode('gbk')
+            ws.cell(row=1,column=2+k).value=keyword.decode('gbk')
+            ws.cell(row=2,column=1+k).value='UserIndex'
+            ws.cell(row=2,column=2+k).value='MediaIndex'
 
             for i in range(0+k,2+k):
                 for j in range(2,int(DayLength)+2):
-                    ws.cell(row=j,column=0+k).set_value_explicit(value=UserIndex[j-2])
-                    ws.cell(row=j,column=1+k).set_value_explicit(value=MediaIndex[j-2])
+                    ws.cell(row=j+1,column=1+k).value=int(UserIndex[j-2])
+                    ws.cell(row=j+1,column=2+k).value=int(MediaIndex[j-2])
         else:
             wb = Workbook( )
             ws = wb.get_sheet_by_name("Sheet")
             ws.title = 'SogouIndex'
             k=0
-            ws.cell(row=0,column=1+k).set_value_explicit(value=keyword)
-            ws.cell(row=0,column=2+k).set_value_explicit(value=keyword)
-            ws.cell(row=1,column=0+k).set_value_explicit(value='Date')
-            ws.cell(row=1,column=1+k).set_value_explicit(value='UserIndex')
-            ws.cell(row=1,column=2+k).set_value_explicit(value='MediaIndex')
+            ws.cell(row=1,column=2+k).value=keyword.decode('gbk')
+            ws.cell(row=1,column=3+k).value=keyword.decode('gbk')
+            ws.cell(row=2,column=1+k).value='Date'
+            ws.cell(row=2,column=2+k).value='UserIndex'
+            ws.cell(row=2,column=3+k).value='MediaIndex'
 
             for i in range(0+k,2+k):
                 for j in range(2,int(DayLength)+2):
-                    ws.cell(row=j,column=0+k).set_value_explicit(value=RecordDate[j-2])
-                    ws.cell(row=j,column=1+k).set_value_explicit(value=UserIndex[j-2])
-                    ws.cell(row=j,column=2+k).set_value_explicit(value=MediaIndex[j-2])
+                    ws.cell(row=j+1,column=1+k).value='%s'%RecordDate[j-2]
+                    ws.cell(row=j+1,column=2+k).value=int(UserIndex[j-2])
+                    ws.cell(row=j+1,column=3+k).value=int(MediaIndex[j-2])
 
 
         wb.save(CurrentDir+'\\'+name+'.xlsx')
