@@ -1,8 +1,7 @@
 SogouIndex Fetcher
 ==========
 
-##About
-This program will download SogouIndex automatically for given keywords, and stored them in .xlsx files. 
+This program will download [SogouIndex](#SI) automatically for given keywords, and stored them in .xlsx files. 
 
 
 ##How to use
@@ -90,7 +89,7 @@ Date | UserIndex | MediaIndex | UserIndex | MediaIndex | UserIndex | MediaIndex 
 
 
 
-##SogouIndex
+<h2 id="SI">SogouIndex</h2>
 [Sogou](http://www.sogou.com/) is a popular SE(search engine) in China (also not that much as Baidu). Just as [Google Trends](http://www.google.com/trends/) and [BaiduIndex](http://index.baidu.com/), SogouIndex tries to measure popularity of given keywords based on the searching behavior of its users.
 
 
