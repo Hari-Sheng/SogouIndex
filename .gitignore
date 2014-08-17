@@ -44,3 +44,12 @@ Icon
 *.xls
 *.csv
 *.xlsx
+
+
+
+# =========================
+# Packing directories
+# =========================
+.idea/
+build/
+dist/
