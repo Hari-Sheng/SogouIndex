@@ -44,7 +44,7 @@ Icon
 *.xls
 *.csv
 *.xlsx
-
+*.xlsx.baiduyun.uploading.cfg
 
 
 # =========================
