@@ -1,6 +1,6 @@
 # -*- mode: python -*-
 a = Analysis(['main.py'],
-             pathex=['D:\\GitHub\\SogouIndex'],
+             pathex=['E:\\GitHub\\SogouIndex'],
              hiddenimports=[],
              hookspath=None,
              runtime_hooks=None)
@@ -14,4 +14,4 @@ exe = EXE(pyz,
           debug=False,
           strip=None,
           upx=True,
-          console=True )
+          console=True , icon='SogouIndex.ico')
