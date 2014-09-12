@@ -47,9 +47,12 @@ Icon
 *.xlsx.baiduyun.uploading.cfg
 
 
+
+
 # =========================
 # Packing directories
 # =========================
 .idea/
 build/
 dist/
+*.spec
