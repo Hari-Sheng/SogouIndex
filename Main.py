@@ -132,14 +132,22 @@ if __name__=="__main__":
         if os.path.isfile(KeywordList+'.xlsx'):
             os.remove(KeywordList+'.xlsx')
         KeywordText = open(KeywordList+".txt").read()
+        keywords = re.split('[\s]*[,]*[\s]*[\r]*[\n]*[\t]*',KeywordText)
+
+        isSingleFile = raw_input("Save in a single file?(Y/N): ")
+        if isSingleFile =="Y":
         #print re.split('[,]*[\s]*[\r]*[\n]*[\t]*',KeywordText)
         #KeywordText = KeywordText.replace('\r',' ').replace('\n', ' ').replace('\t', ' ').strip()
         #print (KeywordText)
-        keywords = re.split('[\s]*[,]*[\s]*[\r]*[\n]*[\t]*',KeywordText)
-        # print keywords
-        for element in keywords:
-            search(KeywordList, element, os.getcwd())
-        keyword = raw_input("Press Enter to exit...")
+
+            # print keywords
+            for element in keywords:
+                search(KeywordList, element, os.getcwd())
+        else:
+            for element in keywords:
+                search(element, element, os.getcwd())
+
+            keyword = raw_input("Press Enter to exit...")
     else:
         while 1:
             print ("=========================================================================")
