@@ -102,6 +102,6 @@ This toy program is done during my internship at [T.H.Capital](http://thcapital-
 
 Contact Information
 ----------
-+ Email: hsheng@pku.edu.cn
++ Email: Hao.sheng@hec.edu
 + Weibo: [@盛浩Nihilist](http://weibo.com/u/1870340245)
 
